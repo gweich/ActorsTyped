@@ -8,6 +8,8 @@
 
 	<properties>
 		<akka.version>2.6.10</akka.version>
+		<!-- at least for Discovery -->
+		<scala.binary.version>2.13</scala.binary.version>
 	</properties>
 
 	<dependencies>
@@ -23,13 +25,47 @@
 			<version>1.2.3</version>
 		</dependency>
 
-
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
 			<version>3.13.0</version>
 		</dependency>
+
+		<!-- Discovery and look up service The Akka Discovery API enables service 
+			discovery to be provided by different technologies. It allows to delegate 
+			endpoint lookup so that services can be configured depending on the environment 
+			by other means than configuration files. -->
+		<!--  
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-discovery_${scala.binary.version}</artifactId>
+			<version>${akka.version}</version>
+		</dependency>
+		-->
+
+		<!-- In a microservices architecture, you should consider communication 
+			within a service and between services. In general we recommend against using 
+			Akka Cluster and actor messaging between different services because that 
+			would result in a too tight code coupling between the services and difficulties 
+			deploying these independent of each other, which is one of the main reasons 
+			for using a microservices architecture. F Between different services Akka 
+			HTTP or Akka gRPC can be used for synchronous (yet non-blocking) communication 
+			and Akka Streams Kafka or other Alpakka connectors for integration asynchronous 
+			communication. A traditional distributed application may have less complexity 
+			and work well in many cases. For example for a small startup, with a single 
+			team, building an application where time to market is everything. Akka Cluster 
+			can efficiently be used for building such distributed application. The Cluster 
+			extension gives you access to management tasks such as Joining, Leaving and 
+			Downing and subscription of cluster membership events such as MemberUp, MemberRemoved 
+			and UnreachableMember, which are exposed as event APIs. -->
+		<!-- 
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-cluster_${scala.binary.version}</artifactId>
+			<version>${akka.version}</version>
+		</dependency>
+		-->
 
 	</dependencies>
 
