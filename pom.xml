@@ -8,14 +8,13 @@
 
 	<properties>
 		<akka.version>2.6.10</akka.version>
-		<!-- at least for Discovery -->
 		<scala.binary.version>2.13</scala.binary.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-actor-typed_2.13</artifactId>
+			<artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
 			<version>${akka.version}</version>
 		</dependency>
 

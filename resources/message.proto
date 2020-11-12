@@ -6,6 +6,7 @@ option java_package = "weichhart.georg.communication";
 option java_outer_classname = "PerformativeMessages";
 
 // fields are optional by default 
+// missing management of communication protocols http://fipa.org/specs/fipa00061/SC00061G.html
 
 message Message {
   enum PerformativeType {
