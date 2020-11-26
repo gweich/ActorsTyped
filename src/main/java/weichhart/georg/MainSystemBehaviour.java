@@ -32,6 +32,7 @@ public class MainSystemBehaviour extends AbstractBehavior<PerformativeMessages.M
 
 	private MainSystemBehaviour(ActorContext<PerformativeMessages.Message> context) {
 		super(context);
+		// necessary? 
 		context.getSystem().receptionist()
 				.tell(Receptionist.register(MainSystemBehaviour.msgServiceKey, context.getSelf()));
 	}
@@ -52,6 +53,7 @@ public class MainSystemBehaviour extends AbstractBehavior<PerformativeMessages.M
 			ActorRef<PerformativeMessages.Message> firstRef = getContext().spawn(PrintMyActorRefBehavior.create(),
 					FIRSTACTOR);
 
+			// to be notified when child dies or stops but not if supervision strategy. 
 			getContext().watch(firstRef);
 
 			getContext().getLog().debug("First Actor created:\r\n " + firstRef);
@@ -74,7 +76,7 @@ public class MainSystemBehaviour extends AbstractBehavior<PerformativeMessages.M
 			
 			// search receptionist as a workaround; better: remember yourself.
 			ActorRef<Object> resolvedSystemPath = akka.actor.typed.ActorRefResolver.get(getContext().getSystem())
-					.resolveActorRef(getContext().getSelf().path()+"/"+FIRSTACTOR);
+					.resolveActorRef(getContext().getSelf().path().toSerializationFormat() + "/"+FIRSTACTOR);
 			getContext().getLog().debug("inform?: " + resolvedSystemPath);
 			if(resolvedSystemPath!=null)
 				resolvedSystemPath.tell(m);

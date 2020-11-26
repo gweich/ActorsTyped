@@ -27,7 +27,8 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 	/** create behaviour with supervision strategy */
 	public static Behavior<PerformativeMessages.Message> create() {
 
-		return Behaviors.supervise(Behaviors.setup(PrintMyActorRefBehavior::new)).onFailure(Exception.class,
+		return Behaviors.supervise(Behaviors.setup(PrintMyActorRefBehavior::new))
+				.onFailure(Exception.class,
 				SupervisorStrategy.restart());
 
 	}

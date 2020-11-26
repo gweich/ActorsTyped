@@ -43,6 +43,7 @@ public class ListingReceiver extends AbstractBehavior<Receptionist.Listing> {
 		Iterator<ActorRef<PerformativeMessages.Message>> i = (Iterator<ActorRef<Message>>) ((scala.collection.immutable.Set)l.allServiceInstances(l.getKey())).iterator();
 		while(i.hasNext()) {
 			ActorRef<PerformativeMessages.Message> actor = i.next();
+			// parent from create method. 
 			parent.tell(PerformativeMessages.Message.newBuilder()
 				.setPerformative(PerformativeType.INFORM)
 				.setSubject(SUBJECT_LISTING)
