@@ -106,7 +106,7 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 	}
 
 	Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
-
+		/// TODO: deregister
 		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal);
 
 		return Behaviors.same();

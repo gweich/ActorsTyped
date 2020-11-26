@@ -14,7 +14,9 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 	
 	int max = 3;
 
-	/** create behaviour with restart strategy on failure */
+	/** create behaviour with restart strategy on failure 
+	 *  TODO: init max in create -> was passiert bei restart? 
+	 * */
 	public static Behavior<PerformativeMessages.Message> create() {
 		return Behaviors.supervise(Behaviors.setup(PrintMessageXtimesAndDie::new))
 				.onFailure(NullPointerException.class, SupervisorStrategy.restart());
@@ -49,7 +51,7 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 		if(max == 0) {
 			throw new NullPointerException("Oh nooo " + getContext().getSelf().path().name());
 		}
-		
+		//// TODO other behaviour
 		if(max <=-1) {
 			// there is a 50/50 change of another exception where we do not restart
 			// and a proper stopping
@@ -79,6 +81,7 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 	}
 	
 	Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
+		/// TODO: deregister
 
 		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal);
 
