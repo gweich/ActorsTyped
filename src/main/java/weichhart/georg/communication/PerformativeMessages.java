@@ -180,9 +180,9 @@ public final class PerformativeMessages {
        */
       UNKNOWN(0),
       /**
-       * <code>INFOM = 1;</code>
+       * <code>INFORM = 1;</code>
        */
-      INFOM(1),
+      INFORM(1),
       /**
        * <code>INFORM_IF = 2;</code>
        */
@@ -275,9 +275,9 @@ public final class PerformativeMessages {
        */
       public static final int UNKNOWN_VALUE = 0;
       /**
-       * <code>INFOM = 1;</code>
+       * <code>INFORM = 1;</code>
        */
-      public static final int INFOM_VALUE = 1;
+      public static final int INFORM_VALUE = 1;
       /**
        * <code>INFORM_IF = 2;</code>
        */
@@ -389,7 +389,7 @@ public final class PerformativeMessages {
       public static PerformativeType forNumber(int value) {
         switch (value) {
           case 0: return UNKNOWN;
-          case 1: return INFOM;
+          case 1: return INFORM;
           case 2: return INFORM_IF;
           case 3: return REQUEST;
           case 4: return REQUEST_WHEN;
@@ -1288,21 +1288,21 @@ public final class PerformativeMessages {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\rmessage.proto\022\017Weichhart.Georg\"\346\003\n\007Mes" +
+      "\n\rmessage.proto\022\017Weichhart.Georg\"\347\003\n\007Mes" +
       "sage\022?\n\014performative\030\001 \001(\0162).Weichhart.G" +
       "eorg.Message.PerformativeType\022\013\n\003txt\030\002 \001" +
-      "(\t\022\017\n\007subject\030\003 \001(\t\022\016\n\006source\030\004 \001(\t\"\353\002\n\020" +
-      "PerformativeType\022\013\n\007UNKNOWN\020\000\022\t\n\005INFOM\020\001" +
-      "\022\r\n\tINFORM_IF\020\002\022\013\n\007REQUEST\020\003\022\020\n\014REQUEST_" +
-      "WHEN\020\004\022\024\n\020REQUEST_WHENEVER\020\005\022\t\n\005QUERY\020\006\022" +
-      "\014\n\010QUERY_IF\020\007\022\t\n\005AGREE\020\010\022\013\n\007CONFIRM\020\t\022\016\n" +
-      "\nDISCONFIRM\020\n\022\r\n\tSUBSCRIBE\020\022\022\017\n\013UNSUBSCR" +
-      "IBE\020\023\022\025\n\021CALL_FOR_PROPOSAL\020\024\022\013\n\007PROPOSE\020" +
-      "\025\022\023\n\017ACCEPT_PROPOSAL\020\026\022\023\n\017REJECT_PROPOSA" +
-      "L\020\027\022\n\n\006CANCEL\020\036\022\n\n\006REFUSE\020\037\022\022\n\016NOT_UNDER" +
-      "STOOD\020 \022\013\n\007FAILURE\020!\022\010\n\004WARN\020\"\022\t\n\005ERROR\020" +
-      "#B5\n\035weichhart.georg.communicationB\024Perf" +
-      "ormativeMessagesb\006proto3"
+      "(\t\022\017\n\007subject\030\003 \001(\t\022\016\n\006source\030\004 \001(\t\"\354\002\n\020" +
+      "PerformativeType\022\013\n\007UNKNOWN\020\000\022\n\n\006INFORM\020" +
+      "\001\022\r\n\tINFORM_IF\020\002\022\013\n\007REQUEST\020\003\022\020\n\014REQUEST" +
+      "_WHEN\020\004\022\024\n\020REQUEST_WHENEVER\020\005\022\t\n\005QUERY\020\006" +
+      "\022\014\n\010QUERY_IF\020\007\022\t\n\005AGREE\020\010\022\013\n\007CONFIRM\020\t\022\016" +
+      "\n\nDISCONFIRM\020\n\022\r\n\tSUBSCRIBE\020\022\022\017\n\013UNSUBSC" +
+      "RIBE\020\023\022\025\n\021CALL_FOR_PROPOSAL\020\024\022\013\n\007PROPOSE" +
+      "\020\025\022\023\n\017ACCEPT_PROPOSAL\020\026\022\023\n\017REJECT_PROPOS" +
+      "AL\020\027\022\n\n\006CANCEL\020\036\022\n\n\006REFUSE\020\037\022\022\n\016NOT_UNDE" +
+      "RSTOOD\020 \022\013\n\007FAILURE\020!\022\010\n\004WARN\020\"\022\t\n\005ERROR" +
+      "\020#B5\n\035weichhart.georg.communicationB\024Per" +
+      "formativeMessagesb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

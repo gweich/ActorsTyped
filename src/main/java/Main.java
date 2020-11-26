@@ -10,15 +10,30 @@ public class Main {
 
 		ActorSystem<PerformativeMessages.Message> firstActorSystem = ActorSystem.create(MainSystemBehaviour.create(), "MyFIRSTActorSystem");
 		
-		ActorRef<Object> reseloved = akka.actor.typed.ActorRefResolver.get(firstActorSystem).resolveActorRef(firstActorSystem.path().toSerializationFormat());
+		// Logging of Configuration
+		firstActorSystem.logConfiguration();
+		
+		ActorRef<Object> resolvedSystemPath = akka.actor.typed.ActorRefResolver.get(firstActorSystem).resolveActorRef(firstActorSystem.path().toSerializationFormat());
 		
 		firstActorSystem.tell(
 				PerformativeMessages.Message.newBuilder()
-				.setPerformative(PerformativeType.INFOM)
-				.setSubject("inform actor")
-				.setSource(reseloved.path().toString())
+				.setPerformative(PerformativeType.REQUEST)
+				.setSubject("start actor")
+				.setSource(resolvedSystemPath.path().toString())
 				.setTxt("!\"§$%&/()").build()
 				);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {} // we don't care if we are interrupted earlier
+		
+		firstActorSystem.tell(
+				PerformativeMessages.Message.newBuilder()
+				.setPerformative(PerformativeType.INFORM)
+				.setSubject("infrom actor")
+				.setSource(resolvedSystemPath.path().toString())
+				.setTxt("!\"§$%&/()").build()
+				);
+		
 	}
 
 }

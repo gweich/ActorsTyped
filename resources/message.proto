@@ -11,7 +11,7 @@ option java_outer_classname = "PerformativeMessages";
 message Message {
   enum PerformativeType {
     UNKNOWN = 0;
-    INFOM = 1;
+    INFORM = 1;
     INFORM_IF = 2;
     REQUEST = 3;
     REQUEST_WHEN = 4;
