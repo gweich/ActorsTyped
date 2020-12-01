@@ -42,6 +42,9 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 			if (m.getSubject().equals("max")) {
 				max = Integer.parseInt(m.getTxt());
 			}
+		} else if (m.getPerformative() == PerformativeMessages.Message.PerformativeType.FAILURE) {
+			// msg to self. switch behavior
+			return PrintMessageXtimesAndDie2.create();			
 		}
 
 		if(max-- >= 0) {
@@ -50,42 +53,41 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 		
 		if(max == 0) {
 			throw new NullPointerException("Oh nooo " + getContext().getSelf().path().name());
+			//return Behaviors.stopped();
 		}
-		//// TODO other behaviour
-		if(max <=-1) {
-			// there is a 50/50 change of another exception where we do not restart
-			// and a proper stopping
-			if(Math.random()>0.5)
-				throw new ArrayIndexOutOfBoundsException("Again :-(" + getContext().getSelf().path().name());
-			else {
-				getContext().getLog().debug(getContext().getSelf().path().name() + " stopping ");
-				return Behaviors.stopped();
-			}
-		}
+		
 		return Behaviors.same();
 	}
 	
+	/** switch to other behaviour; do not deregister the service 
+	 * 
+	 * 
+	 * Note that PostStop is not emitted for a restart, so typically you need to handle both PreRestart and PostStop to cleanup resources.
+	 * */
 	Behavior<PerformativeMessages.Message> preRestart(PreRestart signal) {
 
-		getContext().getLog().debug(getContext().getSelf().path().name() + " preRestart\r\n" + signal);
-		getContext().getLog().debug(""+max);
+		getContext().getLog().debug(getContext().getSelf().path().name() + " preRestart\r\n" + signal + " max " + max);
 
-		// sending future self a message about new max value
+		
 		getContext().getSelf().tell(PerformativeMessages.Message.newBuilder()
-				.setPerformative(PerformativeType.INFORM)
+				.setPerformative(PerformativeType.FAILURE)
 				.setSource(getContext().getSelf().path().toSerializationFormat())
-				.setSubject("max")
-				.setTxt("0").build());
-		// TODO: other Behaviour
-		return Behaviors.same();
+				.setSubject("msg to self - trigger next behavior")
+				.setTxt("failed - do next behavior").build());
+		
+		// switch to other Behaviour here is not working as expected
+		//return PrintMessageXtimesAndDie2.create();
+		return this;
 	}
-	
+
+	/** this should not be called; because in preRestart we switch to another behavior */
 	Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
-		/// TODO: deregister
+		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal + " max " + max);
 
-		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal);
-
-		return Behaviors.same();
+			
+		// switch to other Behaviour does not make sense.
+		return this;
 	}
+
 
 }

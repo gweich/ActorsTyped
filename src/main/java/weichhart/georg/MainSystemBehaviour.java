@@ -24,9 +24,8 @@ public class MainSystemBehaviour extends AbstractBehavior<PerformativeMessages.M
 	static String FIRSTACTOR = "first-actor";
 
 	public static Behavior<PerformativeMessages.Message> create() {
-		Behavior<PerformativeMessages.Message> b = Behaviors.setup(MainSystemBehaviour::new);
 		
-		return Behaviors.supervise(b).onFailure(Exception.class,
+		return Behaviors.supervise(Behaviors.setup(MainSystemBehaviour::new)).onFailure(Exception.class,
 				SupervisorStrategy.restart());
 	}
 

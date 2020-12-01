@@ -14,6 +14,7 @@ import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.receptionist.Receptionist;
 import akka.actor.typed.receptionist.ServiceKey;
 import weichhart.georg.communication.PerformativeMessages;
+import weichhart.georg.communication.PerformativeMessages.Message;
 import weichhart.georg.communication.PerformativeMessages.Message.PerformativeType;
 
 public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessages.Message> {
@@ -26,8 +27,13 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 
 	/** create behaviour with supervision strategy */
 	public static Behavior<PerformativeMessages.Message> create() {
-
-		return Behaviors.supervise(Behaviors.setup(PrintMyActorRefBehavior::new))
+		Behavior<Message> b = Behaviors.setup(
+				ctx -> {
+					PrintMyActorRefBehavior b2 = new PrintMyActorRefBehavior(ctx);
+					b2.registerAndSpawnChild();
+					return b2;					
+				});
+		return Behaviors.supervise(b)
 				.onFailure(Exception.class,
 				SupervisorStrategy.restart());
 
@@ -36,14 +42,18 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 	/** also register with the receptionist */
 	protected PrintMyActorRefBehavior(ActorContext<PerformativeMessages.Message> context) {
 		super(context);
-
-		context.getSystem().receptionist().tell(Receptionist.register(printServiceKey, context.getSelf()));
-		context.getSystem().receptionist()
-				.tell(Receptionist.register(MainSystemBehaviour.msgServiceKey, context.getSelf()));
-		
-		listingReceiver = context.spawn(ListingReceiver.create(context.getSelf()), "myListings");
 	}
 
+	protected PrintMyActorRefBehavior registerAndSpawnChild() {
+		getContext().getSystem().receptionist().tell(Receptionist.register(printServiceKey, getContext().getSelf()));
+		getContext().getSystem().receptionist()
+				.tell(Receptionist.register(MainSystemBehaviour.msgServiceKey, getContext().getSelf()));
+		
+		listingReceiver = getContext().spawn(ListingReceiver.create(getContext().getSelf()), "myListings");
+
+		return this;
+	}
+	
 	@Override
 	public Receive<PerformativeMessages.Message> createReceive() {
 		return newReceiveBuilder().onMessage(PerformativeMessages.Message.class, this::printIt)
@@ -101,14 +111,15 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 	Behavior<PerformativeMessages.Message> preRestart(PreRestart signal) {
 
 		getContext().getLog().debug(getContext().getSelf().path().name() + " preRestart\r\n" + signal);
-		
+
 		return Behaviors.same();
 	}
 
 	Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
-		/// TODO: deregister
 		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal);
 
+		getContext().getSystem().receptionist().tell(Receptionist.deregister(printServiceKey, getContext().getSelf()));
+		
 		return Behaviors.same();
 	}
 

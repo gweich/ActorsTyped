@@ -39,22 +39,20 @@ public class AnnoyingBehaviour extends AbstractBehavior<PerformativeMessages.Mes
 				.build();
 	}
 
-	
 	private Behavior<PerformativeMessages.Message> anoy(PerformativeMessages.Message m) {
-		
-		if(this.AnoyCounter-- >= 0) {
-			
-			ActorRef<Object> resolvedSystemPath = akka.actor.typed.ActorRefResolver.get(getContext().getSystem())
-					.resolveActorRef("/user/**/"+MainSystemBehaviour.FIRSTACTOR);
 
-			
-			return Behaviors.same();			
+		if (this.AnoyCounter-- >= 0) {
+
+			ActorRef<Object> resolvedSystemPath = akka.actor.typed.ActorRefResolver.get(getContext().getSystem())
+					.resolveActorRef("/user/**/" + MainSystemBehaviour.FIRSTACTOR);
+
+			return Behaviors.same();
 		}
-		
+
 		// switch Behaviour
 		return PrintMessageXtimesAndDie.create();
 	}
-	
+
 	private Behavior<PerformativeMessages.Message> preRestart(PreRestart signal) {
 
 		getContext().getLog().debug(getContext().getSelf().path().name() + "\r\n PreRestart " + signal);
@@ -65,6 +63,9 @@ public class AnnoyingBehaviour extends AbstractBehavior<PerformativeMessages.Mes
 	private Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
 
 		getContext().getLog().debug(getContext().getSelf().path().name() + "\r\n postStop " + signal);
+
+		getContext().getSystem().receptionist()
+				.tell(Receptionist.deregister(MainSystemBehaviour.msgServiceKey, getContext().getSelf()));
 
 		return Behaviors.same();
 	}
@@ -82,5 +83,5 @@ public class AnnoyingBehaviour extends AbstractBehavior<PerformativeMessages.Mes
 
 		return Behaviors.same();
 	}
-	
+
 }
