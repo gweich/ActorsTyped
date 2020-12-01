@@ -1,18 +1,25 @@
 package weichhart.georg;
 
 import akka.actor.typed.Behavior;
+import akka.actor.typed.ChildFailed;
 import akka.actor.typed.PostStop;
 import akka.actor.typed.PreRestart;
 import akka.actor.typed.SupervisorStrategy;
+import akka.actor.typed.Terminated;
+import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
+import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.receptionist.Receptionist;
 import weichhart.georg.communication.PerformativeMessages;
 import weichhart.georg.communication.PerformativeMessages.Message.PerformativeType;
 
-public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
+public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessages.Message> {
 	
 	int max = 3;
+	
+	int myChildren = 0;
+
 
 	/** create behaviour with restart strategy on failure 
 	 *  TODO: init max in create -> was passiert bei restart? 
@@ -28,12 +35,21 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 		context.getSystem().receptionist().tell(
 				Receptionist.register(MainSystemBehaviour.msgServiceKey, context.getSelf()));
 		context.getSystem().receptionist().tell(
-				Receptionist.register(printServiceKey, context.getSelf()));
+				Receptionist.register(PrintMyActorRefBehavior.printServiceKey, context.getSelf()));
 
 	}
 
+
 	@Override
-	protected Behavior<PerformativeMessages.Message> printIt(PerformativeMessages.Message m) {
+	public Receive<PerformativeMessages.Message> createReceive() {
+		return newReceiveBuilder().onMessage(PerformativeMessages.Message.class, this::doIt)
+				.onSignal(PreRestart.class, this::preRestart).onSignal(PostStop.class, this::postStop)
+				.onSignal(ChildFailed.class, this::childFailed).onSignal(Terminated.class, this::childTerminated)				
+				.build();
+	}
+	
+
+	protected Behavior<PerformativeMessages.Message> doIt(PerformativeMessages.Message m) {
 		
 		
 		getContext().getLog().debug(getContext().getSelf().path().name() + ":Msg ("+max+"): " + m.getPerformative().getValueDescriptor().getName());
@@ -84,10 +100,26 @@ public class PrintMessageXtimesAndDie extends PrintMyActorRefBehavior {
 	Behavior<PerformativeMessages.Message> postStop(PostStop signal) {
 		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal + " max " + max);
 
+		getContext().getSystem().receptionist().tell(Receptionist.deregister(PrintMyActorRefBehavior.printServiceKey, getContext().getSelf()));
+		getContext().getSystem().receptionist().tell(Receptionist.deregister(MainSystemBehaviour.msgServiceKey, getContext().getSelf()));
 			
 		// switch to other Behaviour does not make sense.
 		return this;
 	}
 
+	Behavior<PerformativeMessages.Message> childFailed(ChildFailed signal) {
 
+		getContext().getLog().debug(getContext().getSelf().path().name() + " childFailed\r\n" + signal);
+		if(--myChildren<=0)
+			return Behaviors.stopped();
+		return Behaviors.same();
+	}
+
+	Behavior<PerformativeMessages.Message> childTerminated(Terminated signal) {
+
+		getContext().getLog().debug(getContext().getSelf().path().name() + " childTerminated\r\n" + signal);
+		if(--myChildren<=0)
+			return Behaviors.stopped();
+		return Behaviors.same();
+	}
 }

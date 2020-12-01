@@ -39,7 +39,6 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 
 	}
 
-	/** also register with the receptionist */
 	protected PrintMyActorRefBehavior(ActorContext<PerformativeMessages.Message> context) {
 		super(context);
 	}
@@ -119,7 +118,8 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 		getContext().getLog().debug(getContext().getSelf().path().name() + " postStop\r\n" + signal);
 
 		getContext().getSystem().receptionist().tell(Receptionist.deregister(printServiceKey, getContext().getSelf()));
-		
+		getContext().getSystem().receptionist().tell(Receptionist.deregister(MainSystemBehaviour.msgServiceKey, getContext().getSelf()));
+				
 		return Behaviors.same();
 	}
 

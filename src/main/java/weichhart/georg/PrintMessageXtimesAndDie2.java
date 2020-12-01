@@ -1,13 +1,8 @@
 package weichhart.georg;
 
 import akka.actor.typed.Behavior;
-import akka.actor.typed.ChildFailed;
-import akka.actor.typed.PostStop;
-import akka.actor.typed.PreRestart;
-import akka.actor.typed.Terminated;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
-import akka.actor.typed.javadsl.Receive;
 import weichhart.georg.communication.PerformativeMessages;
 
 public class PrintMessageXtimesAndDie2 extends PrintMyActorRefBehavior {
@@ -29,7 +24,6 @@ public class PrintMessageXtimesAndDie2 extends PrintMyActorRefBehavior {
 	@Override
 	protected Behavior<PerformativeMessages.Message> printIt(PerformativeMessages.Message m) {
 
-		
 		getContext().getLog().debug(getContext().getSelf().path().name() + "  print it PrintMessageXtimesAndDie2");
 		// there is a 50/50 change of another exception where we do not restart
 		// and a proper stopping
