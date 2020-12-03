@@ -27,10 +27,14 @@ public class PrintMessageXtimesAndDie2 extends PrintMyActorRefBehavior {
 		getContext().getLog().debug(getContext().getSelf().path().name() + "  print it PrintMessageXtimesAndDie2");
 		// there is a 50/50 change of another exception where we do not restart
 		// and a proper stopping
-		if(Math.random()>0.5)
+		if(Math.random()<0.3)
 			throw new ArrayIndexOutOfBoundsException("Again :-(" + getContext().getSelf().path().name());
 		else {
-			getContext().getLog().debug(getContext().getSelf().path().name() + " stopping ");
+			if(Math.random()<0.4)
+				// and what NullPointerException
+				throw new NullPointerException("Again a NPE ;-( " + getContext().getSelf().path().name());
+			else
+				getContext().getLog().debug(getContext().getSelf().path().name() + " stopping ");
 			return Behaviors.stopped();
 		}
 	}

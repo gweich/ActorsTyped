@@ -47,7 +47,7 @@ public class PrintMyActorRefBehavior extends AbstractBehavior<PerformativeMessag
 		getContext().getSystem().receptionist().tell(Receptionist.register(printServiceKey, getContext().getSelf()));
 		getContext().getSystem().receptionist()
 				.tell(Receptionist.register(MainSystemBehaviour.msgServiceKey, getContext().getSelf()));
-		
+		/// in constructore TODO test ! 
 		listingReceiver = getContext().spawn(ListingReceiver.create(getContext().getSelf()), "myListings");
 
 		return this;

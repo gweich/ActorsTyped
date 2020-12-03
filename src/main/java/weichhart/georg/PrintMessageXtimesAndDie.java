@@ -25,6 +25,8 @@ public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessa
 	 *  TODO: init max in create -> was passiert bei restart? 
 	 * */
 	public static Behavior<PerformativeMessages.Message> create() {
+		System.out.println("called create from PrintMessageXtimesAndDie");
+		
 		return Behaviors.supervise(Behaviors.setup(PrintMessageXtimesAndDie::new))
 				.onFailure(NullPointerException.class, SupervisorStrategy.restart());
 	}
@@ -36,7 +38,7 @@ public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessa
 				Receptionist.register(MainSystemBehaviour.msgServiceKey, context.getSelf()));
 		context.getSystem().receptionist().tell(
 				Receptionist.register(PrintMyActorRefBehavior.printServiceKey, context.getSelf()));
-
+		getContext().getLog().debug("called new");
 	}
 
 
@@ -44,7 +46,6 @@ public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessa
 	public Receive<PerformativeMessages.Message> createReceive() {
 		return newReceiveBuilder().onMessage(PerformativeMessages.Message.class, this::doIt)
 				.onSignal(PreRestart.class, this::preRestart).onSignal(PostStop.class, this::postStop)
-				.onSignal(ChildFailed.class, this::childFailed).onSignal(Terminated.class, this::childTerminated)				
 				.build();
 	}
 	
@@ -63,7 +64,7 @@ public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessa
 			return PrintMessageXtimesAndDie2.create();			
 		}
 
-		if(max-- >= 0) {
+		if(max-- > 0) {
 			// nop
 		}
 		
@@ -105,21 +106,5 @@ public class PrintMessageXtimesAndDie extends AbstractBehavior<PerformativeMessa
 			
 		// switch to other Behaviour does not make sense.
 		return this;
-	}
-
-	Behavior<PerformativeMessages.Message> childFailed(ChildFailed signal) {
-
-		getContext().getLog().debug(getContext().getSelf().path().name() + " childFailed\r\n" + signal);
-		if(--myChildren<=0)
-			return Behaviors.stopped();
-		return Behaviors.same();
-	}
-
-	Behavior<PerformativeMessages.Message> childTerminated(Terminated signal) {
-
-		getContext().getLog().debug(getContext().getSelf().path().name() + " childTerminated\r\n" + signal);
-		if(--myChildren<=0)
-			return Behaviors.stopped();
-		return Behaviors.same();
 	}
 }
